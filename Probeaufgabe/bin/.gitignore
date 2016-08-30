@@ -1,1 +1,8 @@
 /test_connections/
+/models/
+/connections/
+/exceptions/
+/io/
+/core/
+/ui/
+/test_models/

@@ -1,6 +1,5 @@
 package test_connections;
 
-import static org.junit.Assert.*;
 
 import java.sql.ResultSet;
 import java.text.DateFormat;
@@ -22,8 +21,8 @@ public class TestDatabaseController {
 	@Test
 	public void testExecute_sql() {
 		DatabaseController dbController = DatabaseController.getInstance();
-		ResultSet rs = dbController.execute_sql("SELECT date('now') AS currentDate;");
 		try{
+			ResultSet rs = dbController.execute_sql("SELECT date('now') AS currentDate;");
 			rs.next();
 			String currentDate = rs.getString("currentDate");
 			DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");

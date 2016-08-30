@@ -1,9 +1,7 @@
 package connections;
 
 import java.sql.Connection;
-import java.sql.Date;
 import java.sql.DriverManager;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -76,12 +74,16 @@ public class DatabaseController {
 	 * @param sqlStmt
 	 * @return the result set in case of a select statement
 	 * or null in case of insert, update or delete statements.
+	 * @throws SQLException 
 	 */
-	public ResultSet execute_sql(String sqlStmt){
+	public ResultSet execute_sql(String sqlStmt) throws SQLException{
 		try{
 			Statement stmt = connection.createStatement();
 			return stmt.executeQuery(sqlStmt);
-		} catch (Exception e){
+		} catch (SQLException e){
+			if(e.getMessage().matches("(.*)SQLITE_CONSTRAINT(.*)")){
+				throw( new SQLException());
+			}
 			return null;
 		}
 	}
