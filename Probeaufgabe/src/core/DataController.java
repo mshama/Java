@@ -39,8 +39,9 @@ public class DataController {
 			
 			for(int i=1/*skip header*/; i<fileContent.size(); i++){
 				try {
-					this.models.add( (Model) Class.forName(this.currentModel).newInstance());
+					this.models.add( (Model) Class.forName("models." + this.currentModel).newInstance());
 					this.models.get(i-1).setVariables(fileContent.get(i));
+					modifiedIndices.add(i-1);
 				} catch (InstantiationException e) {
 					e.printStackTrace();
 				} catch (IllegalAccessException e) {
@@ -56,7 +57,25 @@ public class DataController {
 		result.add(this.models.get(0).getHeader());
 		// fill data
 		for(int i=0; i<this.models.size(); i++){
-			result.add(this.models.get(0).getData());
+			result.add(this.models.get(i).getData());
+		}
+
+		this.isModified = true;
+		
+		return result;
+	}
+	
+	/**
+	 * returns data stored in the model
+	 * @return
+	 */
+	public ArrayList<String[]> getData(){
+		ArrayList<String[]> result = new ArrayList<String[]>();
+		// add table header
+		result.add(this.models.get(0).getHeader());
+		// fill data
+		for(int i=0; i<this.models.size(); i++){
+			result.add(this.models.get(i).getData());
 		}
 		
 		return result;
@@ -68,7 +87,7 @@ public class DataController {
 	 */
 	public void addData(String[] newData){
 		try {
-			this.models.add((Model) Class.forName(this.currentModel).newInstance());
+			this.models.add((Model) Class.forName("models." + this.currentModel).newInstance());
 			this.models.get(models.size()-1).setVariables(newData);
 			this.modifiedIndices.add(models.size()-1);
 			this.isModified = true;

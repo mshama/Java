@@ -32,7 +32,7 @@ public class DataReader {
 			fileContent = new ArrayList<String[]>();
 			while ((line = br.readLine()) != null) {
 				// split the line using separator
-				String[] lineContent = line.split(seperator);
+				String[] lineContent = line.split(seperator + "(?=([^\"]*\"[^\"]*\")*[^\"]*$)"); // to avoid commas inside of quotes
 				
 				fileContent.add(lineContent);
 

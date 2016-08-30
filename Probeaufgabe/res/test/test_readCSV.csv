@@ -1,1 +1,4 @@
-1,2,abc
+Warengruppen ID,Übergeordnete Warengruppe,Bezeichnung
+4,2,test1
+5,2,test2
+6,4,test3
