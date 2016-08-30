@@ -7,6 +7,7 @@ import java.util.ArrayList;
 
 import org.junit.Test;
 
+import exceptions.DependencyException;
 import exceptions.DuplicateItemException;
 import exceptions.ItemNotSavedException;
 import exceptions.NoItemWasFoundException;
@@ -35,7 +36,7 @@ public class TestProductGroup {
 	}
 
 	@Test
-	public void testSave() throws DuplicateItemException {
+	public void testSave() throws DuplicateItemException, DependencyException {
 		// test insert
 		ProductGroup pg = new ProductGroup(1,2,"test1");
 		assert(!pg.isDatabaseRecord());
@@ -56,7 +57,7 @@ public class TestProductGroup {
 	}
 
 	@Test
-	public void testDelete() throws ItemNotSavedException, SQLException {
+	public void testDelete() throws ItemNotSavedException, SQLException, DependencyException {
 		try {
 			ArrayList<ProductGroup> result = ProductGroup.select("Description", "test3");
 			result.get(0).delete();

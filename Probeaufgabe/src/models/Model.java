@@ -3,6 +3,7 @@ package models;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
+import exceptions.DependencyException;
 import exceptions.DuplicateItemException;
 import exceptions.ItemNotSavedException;
 import exceptions.NoItemWasFoundException;
@@ -15,10 +16,11 @@ import exceptions.NoItemWasFoundException;
 public interface Model {
 	/**
 	 * saves data into the database
+	 * @throws DuplicateItemException, DependencyException 
 	 */
-	public void save() throws DuplicateItemException;
+	public void save() throws DuplicateItemException, DependencyException;
 	
-	public void delete() throws ItemNotSavedException, SQLException;
+	public void delete() throws ItemNotSavedException, SQLException, DependencyException;
 	
 	/**
 	 * selects data from the database based on the given parameters
@@ -46,4 +48,15 @@ public interface Model {
 	 * @param values a string array containing the values of the class variables
 	 */
 	public void setVariables(String[] values);
+	
+	public boolean isDatabaseRecord();
+	
+	public void setIsDBRecord(boolean check);
+
+	/**
+	 * selects all data for this model from the database
+	 * @return
+	 * @throws NoItemWasFoundException 
+	 */
+	public ArrayList<String[]> selectAll() throws NoItemWasFoundException;
 }

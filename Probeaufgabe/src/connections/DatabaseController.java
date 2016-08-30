@@ -6,6 +6,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import exceptions.DependencyException;
+
 /**
  * this is a singlton class responsible for creating connection with the
  * database and handle the execution of sql statments
@@ -76,13 +78,16 @@ public class DatabaseController {
 	 * or null in case of insert, update or delete statements.
 	 * @throws SQLException 
 	 */
-	public ResultSet execute_sql(String sqlStmt) throws SQLException{
+	public ResultSet execute_sql(String sqlStmt) throws SQLException, DependencyException{
 		try{
 			Statement stmt = connection.createStatement();
 			return stmt.executeQuery(sqlStmt);
 		} catch (SQLException e){
 			if(e.getMessage().matches("(.*)SQLITE_CONSTRAINT(.*)")){
 				throw( new SQLException());
+			}
+			if(e.getMessage().matches("(.*)FOREIGN KEY(.*)")){
+				throw(new DependencyException("Either record has dependency or refrencing a non existing item"));
 			}
 			return null;
 		}

@@ -1,9 +1,14 @@
 package core;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 
+import exceptions.DependencyException;
 import exceptions.DuplicateItemException;
+import exceptions.ItemNotSavedException;
+import exceptions.NoItemWasFoundException;
 import io.DataReader;
+import io.DataWriter;
 import models.Model;
 
 /**
@@ -32,7 +37,7 @@ public class DataController {
 	 * @param filename
 	 * @return
 	 */
-	public ArrayList<String[]> readData(String modelName, String filename){
+	public ArrayList<String[]> readDataFile(String modelName, String filename){
 		this.currentModel = modelName;
 		if(filename.matches("(.*).csv") || filename.matches("(.*).CSV")){
 			ArrayList<String[]> fileContent = DataReader.read_CSV(filename, ",");
@@ -63,6 +68,51 @@ public class DataController {
 		this.isModified = true;
 		
 		return result;
+	}
+	
+	public ArrayList<String[]> readDataDB(String modelName) throws NoItemWasFoundException{
+		this.currentModel = modelName;
+		ArrayList<String[]> data = null;
+		try {
+			this.models.add( (Model) Class.forName("models." + this.currentModel).newInstance());
+			data = this.models.get(0).selectAll();
+			this.models = new ArrayList<Model>();
+			for(int i=1/*skip header*/; i<data.size(); i++){
+				try {
+					this.models.add( (Model) Class.forName("models." + this.currentModel).newInstance());
+					this.models.get(i-1).setVariables(data.get(i));
+					this.models.get(i-1).setIsDBRecord(true);
+				} catch (InstantiationException e) {
+					e.printStackTrace();
+				} catch (IllegalAccessException e) {
+					e.printStackTrace();
+				} catch (ClassNotFoundException e) {
+					e.printStackTrace();
+				}
+			}
+			if(data.size() > 1){
+				isModified = false;
+				return data;
+			} else{
+				throw(new NoItemWasFoundException("No records were found in the database"));
+			}
+		} catch (InstantiationException | IllegalAccessException | ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	public void extractData(String filename){
+		ArrayList<String[]> result = new ArrayList<String[]>();
+		// add table header
+		result.add(this.models.get(0).getHeader());
+		// fill data
+		for(int i=0; i<this.models.size(); i++){
+			result.add(this.models.get(i).getData());
+		}
+		
+		DataWriter.write_CSV(result, filename, ",");
 	}
 	
 	/**
@@ -115,7 +165,22 @@ public class DataController {
 		this.isModified = true;
 	}
 	
-	public void saveData(){
+	public void deleteData(int index) throws DependencyException{
+		if(this.models.get(index).isDatabaseRecord()){
+			try {
+				this.models.get(index).delete();
+				this.models.remove(index);
+			} catch (ItemNotSavedException e) {
+			} catch (SQLException e) {
+			} catch (DependencyException e) {
+				throw(e);
+			}
+		} else{
+			this.models.remove(index);
+		}
+	}
+	
+	public void saveData() throws DependencyException{
 		for(int i=0; i<this.modifiedIndices.size(); i++){
 			try {
 				this.models.get(this.modifiedIndices.get(i)).save();

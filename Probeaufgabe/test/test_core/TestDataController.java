@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import org.junit.Test;
 
 import core.DataController;
+import exceptions.DependencyException;
 
 public class TestDataController {
 
@@ -14,7 +15,7 @@ public class TestDataController {
 	public void testReadData() {
 		DataController dc = new DataController();
 		String filename = System.getProperty("user.dir") + "/res/test/test_readCSV.csv";
-		ArrayList<String[]> result = dc.readData("ProductGroup", filename);
+		ArrayList<String[]> result = dc.readDataFile("ProductGroup", filename);
 		assertArrayEquals(new String[]{"4","2","test1"}, result.get(1));
 	}
 
@@ -22,7 +23,7 @@ public class TestDataController {
 	public void testAddData() {
 		DataController dc = new DataController();
 		String filename = System.getProperty("user.dir") + "/res/test/test_readCSV.csv";
-		dc.readData("ProductGroup", filename);
+		dc.readDataFile("ProductGroup", filename);
 		dc.addData(new String[]{"8","2","test8"});
 		assert(dc.isModified());
 		
@@ -34,7 +35,7 @@ public class TestDataController {
 	public void testUpdateData() {
 		DataController dc = new DataController();
 		String filename = System.getProperty("user.dir") + "/res/test/test_readCSV.csv";
-		dc.readData("ProductGroup", filename);
+		dc.readDataFile("ProductGroup", filename);
 		dc.updateData(new String[]{"4","test4"}, 1);
 		assert(dc.isModified());
 		
@@ -44,10 +45,10 @@ public class TestDataController {
 	}
 
 	@Test
-	public void testSaveData() {
+	public void testSaveData() throws DependencyException {
 		DataController dc = new DataController();
 		String filename = System.getProperty("user.dir") + "/res/test/test_readCSV.csv";
-		dc.readData("ProductGroup", filename);
+		dc.readDataFile("ProductGroup", filename);
 		
 		assert(dc.isModified());
 		

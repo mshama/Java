@@ -5,6 +5,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 
 import connections.DatabaseController;
+import exceptions.DependencyException;
 import exceptions.DuplicateItemException;
 import exceptions.ItemNotSavedException;
 import exceptions.NoItemWasFoundException;
@@ -50,10 +51,10 @@ public class ProductGroup implements Model {
 														rs.getInt("UpperProductGroupID"),
 														rs.getString("Description")
 													);
-				temp.setDBRecord(true);
+				temp.setIsDBRecord(true);
 				result.add(temp);
 			}
-		} catch(SQLException e){
+		} catch(SQLException | DependencyException e){
 			throw(new NoItemWasFoundException("no items corresponds to the selection criteria"));
 		}
 		
@@ -62,7 +63,7 @@ public class ProductGroup implements Model {
 	}
 	
 	@Override
-	public void save() throws DuplicateItemException {
+	public void save() throws DuplicateItemException, DependencyException {
 		if(isDBRecord){
 			update();
 		} else {
@@ -99,18 +100,18 @@ public class ProductGroup implements Model {
 		ResultSet rs;
 		try {
 			rs = dbController.execute_sql(sqlStmt);
-		} catch (SQLException e1) {
+		} catch (SQLException | DependencyException e1) {
 			throw (new DuplicateItemException("Item already Exists in the database"));
 		}
 		// if the product group id is empty then select the latest one from the database
 		if(this.productGroupID == null){
-			sqlStmt = "SELECT ProductGroup FROM sqlite_sequence";
+			sqlStmt = "SELECT seq FROM sqlite_sequence where name='ProductGroup'";
 			try {
 				rs = dbController.execute_sql(sqlStmt);
 				rs.next();
-				this.productGroupID = rs.getInt("ProductGroup");
+				this.productGroupID = rs.getInt("seq");
 				isDBRecord = true;
-			} catch (SQLException e1) {
+			} catch (SQLException | DependencyException e1) {
 				e1.printStackTrace();
 			}
 			
@@ -124,7 +125,7 @@ public class ProductGroup implements Model {
 	/**
 	 * updates database record of the current item
 	 */
-	private void update(){
+	private void update() throws DependencyException{
 		DatabaseController dbController = DatabaseController.getInstance();
 		
 		String valueofUpperProductGroupID;
@@ -148,7 +149,7 @@ public class ProductGroup implements Model {
 	
 	
 	@Override
-	public void delete() throws ItemNotSavedException, SQLException{
+	public void delete() throws ItemNotSavedException, SQLException, DependencyException{
 		if(!isDBRecord){
 			throw(new ItemNotSavedException("Record does not exist in the database. cannot delete"));
 		}
@@ -200,7 +201,11 @@ public class ProductGroup implements Model {
 			}
 			this.description = values[1];
 		} else if(values.length == 3){
-			this.productGroupID = Integer.valueOf(values[0]);
+			try{
+				this.productGroupID = Integer.valueOf(values[0]);
+			} catch(Exception e){
+				this.productGroupID = null;
+			}
 			try{
 				// check in case empty string is sent
 				this.upperProductGroupID = Integer.valueOf(values[1]);
@@ -232,12 +237,31 @@ public class ProductGroup implements Model {
 		return productGroupID;
 	}
 
+	@Override
 	public boolean isDatabaseRecord() {
 		return isDBRecord;
 	}
 	
-	private void setDBRecord(boolean status){
-		this.isDBRecord = status;
+	@Override
+	public void setIsDBRecord(boolean check){
+		this.isDBRecord = check;
+	}
+
+	@Override
+	public ArrayList<String[]> selectAll() throws NoItemWasFoundException {
+		DatabaseController dbController = DatabaseController.getInstance();
+		String sqlStmt = "SELECT * FROM ProductGroup";
+		try{
+			ResultSet rs = dbController.execute_sql(sqlStmt);
+			ArrayList<String[]> data = new ArrayList<String[]>();
+			data.add(this.getHeader());
+			while(rs.next()){
+				data.add(new String[]{Integer.toString(rs.getInt("ProductGroupID")),Integer.toString(rs.getInt("UpperProductGroupID")),rs.getString("Description")});
+			}
+			return data;
+		} catch(SQLException | DependencyException e){
+			throw(new NoItemWasFoundException("no items corresponds to the selection criteria"));
+		}
 	}
 
 }
