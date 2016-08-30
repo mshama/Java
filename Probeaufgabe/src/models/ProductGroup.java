@@ -34,7 +34,7 @@ public class ProductGroup implements Model {
 	 * selects data from the database based on the given parameters
 	 * @param field is the field used to do the search
 	 * @param value is the value we are searching for
-	 * @return
+	 * @return ArrayList of Models that were returned from the query
 	 */
 	public static ArrayList<ProductGroup> select(String field, String value) throws NoItemWasFoundException{
 		DatabaseController dbController = DatabaseController.getInstance();

@@ -18,11 +18,11 @@ public class DataReader {
 	 * this function reads data from CSV file (filename) using seperator
 	 * parameter
 	 * 
-	 * @param filename
-	 * @param seperator
-	 * @return
+	 * @param filename the name of the file that we want to read
+	 * @param separator a special character to separate the cells
+	 * @return returns an ArrayList of string array. each string array represents a line in the file
 	 */
-	public static ArrayList<String[]> read_CSV(String filename, String seperator) {
+	public static ArrayList<String[]> read_CSV(String filename, String separator) {
 		BufferedReader br = null;
 		ArrayList<String[]> fileContent = null;
 		try {
@@ -32,7 +32,7 @@ public class DataReader {
 			fileContent = new ArrayList<String[]>();
 			while ((line = br.readLine()) != null) {
 				// split the line using separator
-				String[] lineContent = line.split(seperator + "(?=([^\"]*\"[^\"]*\")*[^\"]*$)"); // to avoid commas inside of quotes
+				String[] lineContent = line.split(separator + "(?=([^\"]*\"[^\"]*\")*[^\"]*$)"); // to avoid commas inside of quotes
 				
 				fileContent.add(lineContent);
 

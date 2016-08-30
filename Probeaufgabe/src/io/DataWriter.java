@@ -11,12 +11,12 @@ import java.util.ArrayList;
  */
 public class DataWriter {
 	/**
-	 * writes fileContent to a CSV file (filename) using seperator
-	 * @param fileContent
-	 * @param filename
-	 * @param seperator
+	 * writes fileContent to a CSV file (filename) using separator
+	 * @param fileContent content that we want to write to file
+	 * @param filename name of the file that we want to save
+	 * @param separator special character to separate between cells
 	 */
-	public static void write_CSV(ArrayList<String[]> fileContent, String filename, String seperator) {
+	public static void write_CSV(ArrayList<String[]> fileContent, String filename, String separator) {
 		
 		try {
 			FileWriter writer = new FileWriter(filename);
@@ -27,7 +27,7 @@ public class DataWriter {
 				// construct line string
 				StringBuilder sb = new StringBuilder();
 				for(int j=0; j<lineContent.length; j++){
-					sb.append(lineContent[j]).append(seperator);
+					sb.append(lineContent[j]).append(separator);
 				}
 				sb.append("\n");
 				writer.append(sb.toString());

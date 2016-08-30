@@ -15,18 +15,24 @@ import exceptions.NoItemWasFoundException;
  */
 public interface Model {
 	/**
-	 * saves data into the database
+	 * saves current object into the database
 	 * @throws DuplicateItemException, DependencyException 
 	 */
 	public void save() throws DuplicateItemException, DependencyException;
 	
+	/**
+	 * deletes current model from the database
+	 * @throws ItemNotSavedException
+	 * @throws SQLException
+	 * @throws DependencyException
+	 */
 	public void delete() throws ItemNotSavedException, SQLException, DependencyException;
 	
 	/**
 	 * selects data from the database based on the given parameters
 	 * @param field is the field used to do the search
 	 * @param value is the value we are searching for
-	 * @return
+	 * @return ArrayList of Models that were returned from the query
 	 */
 	public static ArrayList<Model> select(String field, String value) throws NoItemWasFoundException{
 		return null;
@@ -49,13 +55,21 @@ public interface Model {
 	 */
 	public void setVariables(String[] values);
 	
+	/**
+	 * @return if the object corresponds to a database records
+	 */
 	public boolean isDatabaseRecord();
 	
+	
+	
+	/**
+	 * @param check value used to set the flag of isDBRecord
+	 */
 	public void setIsDBRecord(boolean check);
 
 	/**
 	 * selects all data for this model from the database
-	 * @return
+	 * @return all data for the given model as an ArrayList<String[]>
 	 * @throws NoItemWasFoundException 
 	 */
 	public ArrayList<String[]> selectAll() throws NoItemWasFoundException;

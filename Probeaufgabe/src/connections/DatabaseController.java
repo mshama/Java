@@ -73,10 +73,10 @@ public class DatabaseController {
 	
 	/**
 	 * this function executes the given SQL statement.
-	 * @param sqlStmt
+	 * @param sqlStmt the SQL statement that will be executed
 	 * @return the result set in case of a select statement
 	 * or null in case of insert, update or delete statements.
-	 * @throws SQLException 
+	 * @throws SQLException if an error occurred during the execution of the SQL statement
 	 */
 	public ResultSet execute_sql(String sqlStmt) throws SQLException, DependencyException{
 		try{

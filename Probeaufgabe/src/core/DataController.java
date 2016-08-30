@@ -33,9 +33,9 @@ public class DataController {
 	/**
 	 * this function reads data from given file and create models based on
 	 * the modelName
-	 * @param modelName
-	 * @param filename
-	 * @return
+	 * @param modelName name of the concrete model that we want to view and modify
+	 * @param filename name of the file that we want to read from
+	 * @return list of String[] where each element represents the data of the objects in the model array list
 	 */
 	public ArrayList<String[]> readDataFile(String modelName, String filename){
 		this.currentModel = modelName;
@@ -70,6 +70,11 @@ public class DataController {
 		return result;
 	}
 	
+	/**
+	 * @param modelName name of the concrete model that we want to view and modify
+	 * @return list of String[] where each element represents the data of the objects in the model array list
+	 * @throws NoItemWasFoundException if there are no data found in the database
+	 */
 	public ArrayList<String[]> readDataDB(String modelName) throws NoItemWasFoundException{
 		this.currentModel = modelName;
 		ArrayList<String[]> data = null;
@@ -103,6 +108,9 @@ public class DataController {
 		return null;
 	}
 	
+	/**
+	 * @param filename name of the file where we are going to save our data
+	 */
 	public void extractData(String filename){
 		ArrayList<String[]> result = new ArrayList<String[]>();
 		// add table header
@@ -117,7 +125,7 @@ public class DataController {
 	
 	/**
 	 * returns data stored in the model
-	 * @return
+	 * @return ArrayList of String array representation of all the objects in our models ArrayList
 	 */
 	public ArrayList<String[]> getData(){
 		ArrayList<String[]> result = new ArrayList<String[]>();
@@ -133,7 +141,7 @@ public class DataController {
 	
 	/**
 	 * adds new data to models array list and add the index to modified index list
-	 * @param newData
+	 * @param newData that we want to insert
 	 */
 	public void addData(String[] newData){
 		try {
@@ -156,8 +164,8 @@ public class DataController {
 	
 	/**
 	 * updates an existing record with new data at a certain index
-	 * @param modifiedData
-	 * @param index
+	 * @param modifiedData the new data that we need to update our object with
+	 * @param index of the object that needs to be updated
 	 */
 	public void updateData(String[] modifiedData, int index){
 		this.models.get(index).setVariables(modifiedData);
@@ -165,6 +173,10 @@ public class DataController {
 		this.isModified = true;
 	}
 	
+	/**
+	 * @param index of the object that needs to be deleted
+	 * @throws DependencyException if other records depends on the deleted record (foreign key)
+	 */
 	public void deleteData(int index) throws DependencyException{
 		if(this.models.get(index).isDatabaseRecord()){
 			try {
@@ -180,6 +192,10 @@ public class DataController {
 		}
 	}
 	
+	/**
+	 * saves data for the modified model objects
+	 * @throws DependencyException if trying to save data using a foreign key that does not exist
+	 */
 	public void saveData() throws DependencyException{
 		for(int i=0; i<this.modifiedIndices.size(); i++){
 			try {
@@ -194,6 +210,9 @@ public class DataController {
 		this.modifiedIndices = new ArrayList<Integer>();
 	}
 	
+	/**
+	 * @return boolean that identify if there were modifications made to the models in the controller
+	 */
 	public boolean isModified(){
 		return this.isModified;
 	}
