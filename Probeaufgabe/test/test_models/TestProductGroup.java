@@ -11,6 +11,7 @@ import exceptions.DependencyException;
 import exceptions.DuplicateItemException;
 import exceptions.ItemNotSavedException;
 import exceptions.NoItemWasFoundException;
+import exceptions.ParameterFormatException;
 import models.Model;
 import models.ProductGroup;
 
@@ -68,7 +69,7 @@ public class TestProductGroup {
 	}
 
 	@Test
-	public void testSetVariables() {
+	public void testSetVariables() throws ParameterFormatException {
 		ProductGroup pg = new ProductGroup();
 		pg.setVariables(new String[] {"1","2","test1"});
 		
@@ -76,7 +77,7 @@ public class TestProductGroup {
 	}
 	
 	@Test
-	public void testModelSetVariables() {
+	public void testModelSetVariables() throws ParameterFormatException {
 		Model pg = new ProductGroup();
 		pg.setVariables(new String[] {"1","2","test1"});
 		

@@ -7,6 +7,7 @@ import exceptions.DependencyException;
 import exceptions.DuplicateItemException;
 import exceptions.ItemNotSavedException;
 import exceptions.NoItemWasFoundException;
+import exceptions.ParameterFormatException;
 
 /**
  * basic interface for database table models
@@ -52,8 +53,9 @@ public interface Model {
 	/**
 	 * used to set the values of the variables of the impelemented classes
 	 * @param values a string array containing the values of the class variables
+	 * @throws ParameterFormatException when the format of one of the given values doesn't match the format of one or more of the variables
 	 */
-	public void setVariables(String[] values);
+	public void setVariables(String[] values) throws ParameterFormatException;
 	
 	/**
 	 * @return if the object corresponds to a database records

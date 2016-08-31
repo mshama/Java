@@ -9,6 +9,7 @@ import exceptions.DependencyException;
 import exceptions.DuplicateItemException;
 import exceptions.ItemNotSavedException;
 import exceptions.NoItemWasFoundException;
+import exceptions.ParameterFormatException;
 
 public class ProductGroup implements Model {
 	private Integer productGroupID = null;
@@ -190,27 +191,45 @@ public class ProductGroup implements Model {
 							};
 	}
 
+	private boolean isNumber(String s){
+		if (s.matches("[0-9]+") && s.length() >= 1) {
+		    return true; 
+		}
+		return false;
+	}
+	
 	@Override
-	public void setVariables(String[] values) {
+	public void setVariables(String[] values) throws ParameterFormatException{
 		if(values.length == 2){
-			try{
-				// check in case empty string is sent
-				this.upperProductGroupID = Integer.valueOf(values[0]);
-			} catch(Exception e){
+			// check in case empty string is sent
+			if(values[0].isEmpty()){
 				this.upperProductGroupID = null;
+			} // check if it is a number string
+			if(isNumber(values[0])){
+				this.upperProductGroupID = Integer.valueOf(values[0]);
+			} else {
+				throw(new ParameterFormatException("Expected Integer value, found characters String"));
 			}
 			this.description = values[1];
 		} else if(values.length == 3){
-			try{
-				this.productGroupID = Integer.valueOf(values[0]);
-			} catch(Exception e){
-				this.productGroupID = null;
-			}
-			try{
-				// check in case empty string is sent
-				this.upperProductGroupID = Integer.valueOf(values[1]);
-			} catch(Exception e){
+			// check in case empty string is sent
+			if(values[0].isEmpty()){
 				this.upperProductGroupID = null;
+			} // check if it is a number string
+			else if(isNumber(values[0])){
+				this.productGroupID = Integer.valueOf(values[0]);
+			} else {
+				throw(new ParameterFormatException("Expected Integer value, found characters String"));
+			}
+			
+			// check in case empty string is sent
+			if(values[1].isEmpty()){
+				this.upperProductGroupID = null;
+			} // check if it is a number string
+			else if(isNumber(values[1])){
+				this.upperProductGroupID = Integer.valueOf(values[1]);
+			} else {
+				throw(new ParameterFormatException("Expected Integer value, found characters String"));
 			}
 			this.description = values[2];
 		}

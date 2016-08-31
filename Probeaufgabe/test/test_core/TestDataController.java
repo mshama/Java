@@ -8,11 +8,12 @@ import org.junit.Test;
 
 import core.DataController;
 import exceptions.DependencyException;
+import exceptions.ParameterFormatException;
 
 public class TestDataController {
 
 	@Test
-	public void testReadData() {
+	public void testReadData() throws ParameterFormatException {
 		DataController dc = new DataController();
 		String filename = System.getProperty("user.dir") + "/res/test/test_readCSV.csv";
 		ArrayList<String[]> result = dc.readDataFile("ProductGroup", filename);
@@ -20,7 +21,7 @@ public class TestDataController {
 	}
 
 	@Test
-	public void testAddData() {
+	public void testAddData() throws ParameterFormatException {
 		DataController dc = new DataController();
 		String filename = System.getProperty("user.dir") + "/res/test/test_readCSV.csv";
 		dc.readDataFile("ProductGroup", filename);
@@ -32,7 +33,7 @@ public class TestDataController {
 	}
 
 	@Test
-	public void testUpdateData() {
+	public void testUpdateData() throws ParameterFormatException {
 		DataController dc = new DataController();
 		String filename = System.getProperty("user.dir") + "/res/test/test_readCSV.csv";
 		dc.readDataFile("ProductGroup", filename);
@@ -45,7 +46,7 @@ public class TestDataController {
 	}
 
 	@Test
-	public void testSaveData() throws DependencyException {
+	public void testSaveData() throws DependencyException, ParameterFormatException {
 		DataController dc = new DataController();
 		String filename = System.getProperty("user.dir") + "/res/test/test_readCSV.csv";
 		dc.readDataFile("ProductGroup", filename);

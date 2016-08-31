@@ -17,6 +17,7 @@ import org.eclipse.wb.swt.SWTResourceManager;
 import core.DataController;
 import exceptions.DependencyException;
 import exceptions.NoItemWasFoundException;
+import exceptions.ParameterFormatException;
 
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.Button;
@@ -121,7 +122,14 @@ public class MainWindow {
 				dialog.setFilterExtensions(new String[] { "*.csv" });
 				dialog.setFilterPath("c:\\");
 				String filename = dialog.open();
-				data = dc.readDataFile(model, filename);
+				try {
+					data = dc.readDataFile(model, filename);
+				} catch (ParameterFormatException e1) {
+					MessageBox messageBox = new MessageBox(shlDataManagement, SWT.ICON_ERROR | SWT.OK);
+					messageBox.setText("Data Input Error");
+					messageBox.setMessage(e1.getMessage());
+					messageBox.open();
+				}
 
 				setupTable();
 				dataLoaded = true;
@@ -235,10 +243,17 @@ public class MainWindow {
 
 					if (mdDlg.open() == SWT.OK) {
 						String[] newData = mdDlg.getValues();
-						TableItem tableItem = new TableItem(table, SWT.NONE);
-						tableItem.setText(newData);
-						dc.addData(newData);
-						table.showItem(tableItem);
+						try {
+							dc.addData(newData);
+							TableItem tableItem = new TableItem(table, SWT.NONE);
+							tableItem.setText(newData);
+							table.showItem(tableItem);
+						} catch (ParameterFormatException e1) {
+							MessageBox messageBox = new MessageBox(shlDataManagement, SWT.ICON_ERROR | SWT.OK);
+							messageBox.setText("Data Input Error");
+							messageBox.setMessage(e1.getMessage());
+							messageBox.open();
+						}
 					}
 				} else {
 					MessageBox messageBox = new MessageBox(shlDataManagement, SWT.ICON_INFORMATION | SWT.OK);
@@ -303,8 +318,15 @@ public class MainWindow {
 								values, "Update");
 
 						if (mdDlg.open() == SWT.OK) {
-							dc.updateData(mdDlg.getValues(), table.getSelectionIndex());
-							selectedItem.setText(mdDlg.getValues());
+							try {
+								dc.updateData(mdDlg.getValues(), table.getSelectionIndex());
+								selectedItem.setText(mdDlg.getValues());
+							} catch (ParameterFormatException e1) {
+								MessageBox messageBox = new MessageBox(shlDataManagement, SWT.ICON_ERROR | SWT.OK);
+								messageBox.setText("Data Input Error");
+								messageBox.setMessage(e1.getMessage());
+								messageBox.open();
+							}
 						}
 					}
 				}

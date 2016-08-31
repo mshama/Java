@@ -7,6 +7,7 @@ import exceptions.DependencyException;
 import exceptions.DuplicateItemException;
 import exceptions.ItemNotSavedException;
 import exceptions.NoItemWasFoundException;
+import exceptions.ParameterFormatException;
 import io.DataReader;
 import io.DataWriter;
 import models.Model;
@@ -36,8 +37,9 @@ public class DataController {
 	 * @param modelName name of the concrete model that we want to view and modify
 	 * @param filename name of the file that we want to read from
 	 * @return list of String[] where each element represents the data of the objects in the model array list
+	 * @throws ParameterFormatException 
 	 */
-	public ArrayList<String[]> readDataFile(String modelName, String filename){
+	public ArrayList<String[]> readDataFile(String modelName, String filename) throws ParameterFormatException{
 		this.currentModel = modelName;
 		if(filename.matches("(.*).csv") || filename.matches("(.*).CSV")){
 			ArrayList<String[]> fileContent = DataReader.read_CSV(filename, ",");
@@ -93,6 +95,9 @@ public class DataController {
 					e.printStackTrace();
 				} catch (ClassNotFoundException e) {
 					e.printStackTrace();
+				} catch (ParameterFormatException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
 				}
 			}
 			if(data.size() > 1){
@@ -142,8 +147,9 @@ public class DataController {
 	/**
 	 * adds new data to models array list and add the index to modified index list
 	 * @param newData that we want to insert
+	 * @throws ParameterFormatException 
 	 */
-	public void addData(String[] newData){
+	public void addData(String[] newData) throws ParameterFormatException{
 		try {
 			this.models.add((Model) Class.forName("models." + this.currentModel).newInstance());
 			this.models.get(models.size()-1).setVariables(newData);
@@ -166,8 +172,9 @@ public class DataController {
 	 * updates an existing record with new data at a certain index
 	 * @param modifiedData the new data that we need to update our object with
 	 * @param index of the object that needs to be updated
+	 * @throws ParameterFormatException 
 	 */
-	public void updateData(String[] modifiedData, int index){
+	public void updateData(String[] modifiedData, int index) throws ParameterFormatException{
 		this.models.get(index).setVariables(modifiedData);
 		this.modifiedIndices.add(index);
 		this.isModified = true;
